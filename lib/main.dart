@@ -126,8 +126,7 @@ class HomePage extends StatelessWidget {
         children: [
           FloatingActionButton(
             heroTag: "refreshBtn",
-            onPressed: () =>
-                mahasiswaController.fetchMahasiswa(), // Refresh data manually
+            onPressed: () => mahasiswaController.fetchMahasiswa(),
             backgroundColor: Colors.blueAccent,
             child: Icon(Icons.refresh),
           ),
@@ -135,7 +134,7 @@ class HomePage extends StatelessWidget {
           FloatingActionButton(
             heroTag: "addDataBtn",
             onPressed: () {
-              Get.to(TambahDataPage()); // Navigate to Add Data Page
+              Get.to(TambahDataPage());
             },
             backgroundColor: Colors.green,
             child: Icon(Icons.add),
@@ -153,7 +152,7 @@ class MahasiswaController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    fetchMahasiswa(); // Fetch data once when initialized
+    fetchMahasiswa();
   }
 
   void fetchMahasiswa() async {
