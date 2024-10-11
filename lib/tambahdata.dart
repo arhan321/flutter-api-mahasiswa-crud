@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:intl/intl.dart';
+import 'controllers/tambah_data_controller.dart';
+import 'routes/routes.dart';
 
 class TambahDataPage extends StatefulWidget {
   @override
@@ -11,6 +11,7 @@ class TambahDataPage extends StatefulWidget {
 
 class _TambahDataPageState extends State<TambahDataPage> {
   final _formKey = GlobalKey<FormState>();
+  final TambahDataController _tambahDataController = TambahDataController();
 
   final TextEditingController namaController = TextEditingController();
   final TextEditingController nimController = TextEditingController();
@@ -49,55 +50,6 @@ class _TambahDataPageState extends State<TambahDataPage> {
     'industri'
   ];
   final List<String> statusOptions = ['aktif', 'nonaktif'];
-
-  Future<void> _selectDate(BuildContext context) async {
-    DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime(2100),
-    );
-
-    if (pickedDate != null) {
-      String formattedDate = DateFormat('yyyy-MM-dd').format(pickedDate);
-      setState(() {
-        ttlController.text = formattedDate;
-      });
-    }
-  }
-
-  void tambahDataMahasiswa(BuildContext context) async {
-    final response = await http.post(
-      Uri.parse('https://abl.djncloud.my.id/api/v1/mahasiswa'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode({
-        'nama_mahasiswa': namaController.text,
-        'nim': nimController.text,
-        'email': emailController.text,
-        'ttl': ttlController.text + " 03:00:00",
-        'jenis_kelamin': jenisKelamin,
-        'agama': agama,
-        'alamat': alamatController.text,
-        'fakultas': fakultas,
-        'jurusan': jurusan,
-        'status': status,
-      }),
-    );
-
-    print('Status Code: ${response.statusCode}');
-    print('Response Body: ${response.body}');
-    print('Response Headers: ${response.headers}');
-
-    if (response.statusCode == 201) {
-      Get.back();
-      Get.snackbar('Success', 'Data Mahasiswa berhasil ditambahkan');
-    } else {
-      Get.snackbar(
-          'Error', 'Gagal menambahkan data mahasiswa: ${response.body}');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -163,7 +115,7 @@ class _TambahDataPageState extends State<TambahDataPage> {
                   return null;
                 },
                 onTap: () {
-                  _selectDate(context);
+                  _tambahDataController.selectDate(context, ttlController);
                 },
               ),
               SizedBox(height: 10),
@@ -268,7 +220,19 @@ class _TambahDataPageState extends State<TambahDataPage> {
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    tambahDataMahasiswa(context);
+                    _tambahDataController.tambahDataMahasiswa(
+                      context,
+                      namaController,
+                      nimController,
+                      emailController,
+                      ttlController,
+                      alamatController,
+                      jenisKelamin,
+                      agama,
+                      fakultas,
+                      jurusan,
+                      status,
+                    );
                   }
                 },
                 child: Text('Tambah Data'),
